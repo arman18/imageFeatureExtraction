@@ -8,8 +8,7 @@ from data_utils import *
 from Lbp import LocalBinaryPatterns
 from Hough_transform import HoughTransform
 from Trainer import Trainer
-
-
+from Hog import HOG
 files = get_all_files()
 train, test = split_(files)
 
@@ -20,7 +19,14 @@ train, test = split_(files)
 # print(acc)
 
 # HoughTransform feature_extractor trainer
-ht = HoughTransform()
-ht_trainer = Trainer(ht, train, test)
-acc = ht_trainer.train()
+# ht = HoughTransform()
+# ht_trainer = Trainer(ht, train, test)
+# acc = ht_trainer.train()
+# print(acc)
+
+
+# HOG feature_extractor trainer
+hog = HOG()
+hog_trainer = Trainer(hog, train, test)
+acc = hog_trainer.train()
 print(acc)
