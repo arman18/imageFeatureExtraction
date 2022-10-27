@@ -37,8 +37,3 @@ def split_(files):
             if item in testing[clss]: continue
             train[clss].append(item)
     return train,testing
-
-
-
-
-
