@@ -34,10 +34,20 @@ class Trainer:
         self.model.fit(x_data, y_labels)
     
     def __accuracy(self, y_test, y_predicted):
-        cnt = 0
+        acc = {}
         for idx in range(len(y_predicted)):
-            if y_test[idx]==y_predicted[idx]: cnt+=1
-        return cnt/len(y_test)
+            if y_test[idx] not in acc.keys():
+                acc[y_test[idx]] = {}
+                acc[y_test[idx]]["total"] = 0
+                acc[y_test[idx]]["correct"] = 0
+            acc[y_test[idx]]["total"] +=1
+            if y_test[idx]==y_predicted[idx]: acc[y_test[idx]]["correct"] +=1
+        cnt = 0
+        for key in acc:
+            cnt+=acc[key]['correct']
+            print(key,": ",acc[key]['correct']/acc[key]['total'])
+        print("overall",": ",cnt/len(y_test))
+        return acc
     
     def __get_feature_vectors(self):
         X = []

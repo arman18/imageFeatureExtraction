@@ -26,12 +26,13 @@ class LocalBinaryPatterns:
         # to build the histogram of patterns
         
         lbp = feature.local_binary_pattern(image, self.numPoints, self.radius, method="uniform")
+        
         (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, self.numPoints + 3), range=(0, self.numPoints + 2))
         
         # normalize the histogram
         hist = hist.astype("float")
         hist /= (hist.sum() + eps)
-        print(hist.shape, hist)
+        # print(hist.shape, hist)
         # return the histogram of Local Binary Patterns
         return hist
     

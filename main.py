@@ -12,21 +12,21 @@ from Hog import HOG
 files = get_all_files()
 train, test = split_(files)
 
-# lbp feature_extractor trainer
-# lbp = LocalBinaryPatterns(24, 8)
-# lbp_trainer = Trainer(lbp, train, test)
-# acc = lbp_trainer.train()
-# print(acc)
+print("lbp feature_extractor")
+lbp = LocalBinaryPatterns(24, 8)
+lbp_trainer = Trainer(lbp, train, test)
 
-# HoughTransform feature_extractor trainer
+acc = lbp_trainer.train()
+
+
+# print("HoughTransform feature_extractor")
 # ht = HoughTransform()
 # ht_trainer = Trainer(ht, train, test)
 # acc = ht_trainer.train()
-# print(acc)
 
 
-# HOG feature_extractor trainer
-hog = HOG()
-hog_trainer = Trainer(hog, train, test)
-acc = hog_trainer.train()
-print(acc)
+
+# print("HOG feature_extractor")
+# hog = HOG()
+# hog_trainer = Trainer(hog, train, test)
+# acc = hog_trainer.train()
