@@ -6,7 +6,14 @@ Created on Tue Oct 28 01:40:46 2022
 
 
 import cv2
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
+from skimage.io import imread
+from skimage import data, color
+from skimage.transform import rescale, resize
+from skimage.filters import gaussian
+from sklearn.model_selection import GridSearchCV
+
+
 
 class Trainer:
     def __init__(self, feature_extractor, train_data, test_data=None):
@@ -30,7 +37,11 @@ class Trainer:
         return acc
 
     def __train(self, x_data, y_labels):
-        self.model = LinearSVC(C=100.0, random_state=42)
+        # self.model = LinearSVC(C=100.0, random_state=42)
+        # self.model.fit(x_data, y_labels)
+        param_grid = {'C':[0.1,1,10,100],'gamma':[0.0001,0.001,0.1,1],'kernel':['rbf','poly']}
+        svc = SVC(probability = True)
+        self.model = GridSearchCV(svc, param_grid)
         self.model.fit(x_data, y_labels)
     
     def __accuracy(self, y_test, y_predicted):
@@ -49,6 +60,16 @@ class Trainer:
         print("overall",": ",cnt/len(y_test))
         return acc
     
+    def __preprocess(self, img, h=64, w=64):
+        # print(img)
+        image = imread(img)
+        grayimage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        img_array = gaussian(grayimage, sigma=0.4)
+        img_resized = resize(img_array,(h, w), mode='constant', preserve_range=True)
+        # print(img_resized)
+        return img_resized
+
+
     def __get_feature_vectors(self):
         X = []
         Y = []
@@ -56,16 +77,14 @@ class Trainer:
         y = []
         for clss in self.train_data.keys():
             for item in self.train_data[clss]:
-                image = cv2.imread(item)
-                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                hist = self.feature_extractor.describe(gray)
+                img = self.__preprocess(item)
+                hist = self.feature_extractor.describe(img)
                 X.append(hist)
                 Y.append(clss)
             
             for item in self.test_data[clss]:
-                image = cv2.imread(item)
-                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                hist = self.feature_extractor.describe(gray)
+                img = self.__preprocess(item)
+                hist = self.feature_extractor.describe(img)
                 x.append(hist)
                 y.append(clss)
         return X,Y,x,y # trainX,trainY,testx,testy

@@ -6,7 +6,11 @@ Created on Tue Oct 27 01:51:46 2022
 
 
 import cv2
+from cv2 import line
 import numpy as np
+from skimage.feature import canny
+from skimage.transform import probabilistic_hough_line
+
 
 
 class HoughTransform:
@@ -16,11 +20,16 @@ class HoughTransform:
         self.circles = None
 
     def get_lines(self, img):
-        edges = cv2.Canny(img, 50, 200)
-        self.lines = cv2.HoughLinesP(edges, 1, np.pi/180,
-                                     100, minLineLength=10, maxLineGap=250)
-        self.lines = self.lines if self.lines is not None else np.zeros((1,1,1))
-        return self.lines.flatten()
+        # edges = cv2.Canny(img, 50, 200)
+        # self.lines = cv2.HoughLinesP(img, 1, np.pi/180,
+        #                              100, minLineLength=10, maxLineGap=250)
+        # self.lines = self.lines if self.lines is not None else np.zeros((1,1,1))
+
+        edges = canny(img, 2, 1, 100)
+        self.lines = probabilistic_hough_line(edges, threshold=10, line_length=5,
+                                        line_gap=3)
+        self.lines = np.array(self.lines)
+        return self.lines
 
     def get_circles(self, img):
         img_blur = cv2.medianBlur(img, 5)
@@ -32,14 +41,19 @@ class HoughTransform:
     def describe(self, img):
         self.img = img
         lines = self.get_lines(img)
-        circles = self.get_circles(img)
-        ft = np.hstack((lines, circles))
-        n =ft.shape[0]
+        # circles = self.get_circles(img)
+        # ft = np.hstack((lines, circles))
+        # n =ft.shape[0]
+        # if n >= 256:
+        #     ft = ft[:256]
+        # else:
+        #     ft = np.hstack((ft, np.zeros(256-n)))
+        n = lines.shape[0]
         if n >= 256:
-            ft = ft[:256]
+            lines = lines[:256]
         else:
-            ft = np.hstack((ft, np.zeros(256-n)))
-        return ft
+            lines = np.hstack((lines, np.zeros(256-n)))
+        return lines
 
     def __show_lines(self):
         for line in self.lines:

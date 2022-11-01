@@ -9,20 +9,23 @@ from Lbp import LocalBinaryPatterns
 from Hough_transform import HoughTransform
 from Trainer import Trainer
 from Hog import HOG
+
 files = get_all_files()
 train, test = split_(files)
 
-print("lbp feature_extractor")
-lbp = LocalBinaryPatterns(24, 8)
-lbp_trainer = Trainer(lbp, train, test)
-
-acc = lbp_trainer.train()
+# print(len(test['class2']))
 
 
-# print("HoughTransform feature_extractor")
-# ht = HoughTransform()
-# ht_trainer = Trainer(ht, train, test)
-# acc = ht_trainer.train()
+# print("lbp feature_extractor")
+# lbp = LocalBinaryPatterns(24, 8)
+# lbp_trainer = Trainer(lbp, train, test)
+# acc = lbp_trainer.train()
+
+
+print("HoughTransform feature_extractor")
+ht = HoughTransform()
+ht_trainer = Trainer(ht, train, test)
+acc = ht_trainer.train()
 
 
 

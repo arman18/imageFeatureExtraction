@@ -23,15 +23,15 @@ def get_all_files(path="data"): # assumed one level hierarchy
         for filename in files:
             file = os.path.join(root, filename)
             dictionary[root.split("\\")[-1]].append(file)
-            
+    # print(dictionary)       
     return dictionary
         
-def split_(files):
+def split_(files, factors = 0.2):
     train = {}
     testing = {}
     
     for clss in files.keys():
-        testing[clss] = np.random.choice(files[clss], int(len(files[clss])*0.2), replace=False)
+        testing[clss] = np.random.choice(files[clss], int(len(files[clss])*factors), replace=False)
         train[clss] = []
         for item in files[clss]:
             if item in testing[clss]: continue
