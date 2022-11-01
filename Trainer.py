@@ -12,6 +12,8 @@ from skimage import data, color
 from skimage.transform import rescale, resize
 from skimage.filters import gaussian
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 
 
@@ -21,6 +23,7 @@ class Trainer:
         self.train_data = train_data
         self.test_data = test_data
         self.model = None
+        self.categories = ['Cloudy','Pen','Shiny']
 
     def get_predictions(self, test_data):
         predictions  = []
@@ -32,7 +35,8 @@ class Trainer:
     def train(self):
         X_train, Y_train, x_test, y_test = self.__get_feature_vectors()
         self.__train(X_train, Y_train)
-        y_predicted = self.get_predictions(x_test)
+        # y_predicted = self.get_predictions(x_test)
+        y_predicted = self.model.predict(x_test)
         acc = self.__accuracy(y_test, y_predicted)
         return acc
 
@@ -58,6 +62,7 @@ class Trainer:
             cnt+=acc[key]['correct']
             print(key,": ",acc[key]['correct']/acc[key]['total'])
         print("overall",": ",cnt/len(y_test))
+        self.show_confussion_mat(y_test, y_predicted)
         return acc
     
     def __preprocess(self, img, h=64, w=64):
@@ -88,4 +93,11 @@ class Trainer:
                 x.append(hist)
                 y.append(clss)
         return X,Y,x,y # trainX,trainY,testx,testy
+
+
+    def show_confussion_mat(self, test_labels, y_pred):
+        cm = confusion_matrix(test_labels, y_pred)
+        print(cm)
+        disp = ConfusionMatrixDisplay(confusion_matrix = cm, display_labels = self.categories)
+        disp.plot()
 

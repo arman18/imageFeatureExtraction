@@ -16,10 +16,10 @@ train, test = split_(files)
 # print(len(test['class2']))
 
 
-# print("lbp feature_extractor")
-# lbp = LocalBinaryPatterns(24, 8)
-# lbp_trainer = Trainer(lbp, train, test)
-# acc = lbp_trainer.train()
+print("lbp feature_extractor")
+lbp = LocalBinaryPatterns(24, 8)
+lbp_trainer = Trainer(lbp, train, test)
+acc = lbp_trainer.train()
 
 
 print("HoughTransform feature_extractor")
@@ -29,7 +29,11 @@ acc = ht_trainer.train()
 
 
 
-# print("HOG feature_extractor")
-# hog = HOG()
-# hog_trainer = Trainer(hog, train, test)
-# acc = hog_trainer.train()
+print("HOG feature_extractor")
+hog = HOG()
+hog_trainer = Trainer(hog, train, test)
+acc = hog_trainer.train()
+
+
+if __name__ == "__main__":
+    pass
