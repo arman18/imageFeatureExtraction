@@ -14,6 +14,9 @@ from skimage.filters import gaussian
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.decomposition import PCA
+
 
 
 
@@ -32,8 +35,8 @@ class Trainer:
             predictions.append(prediction[0])
         return predictions
 
-    def train(self):
-        X_train, Y_train, x_test, y_test = self.__get_feature_vectors()
+    def train(self, pca = False):
+        X_train, Y_train, x_test, y_test = self.__get_feature_vectors(pca)
         self.__train(X_train, Y_train)
         # y_predicted = self.get_predictions(x_test)
         y_predicted = self.model.predict(x_test)
@@ -75,7 +78,7 @@ class Trainer:
         return img_resized
 
 
-    def __get_feature_vectors(self):
+    def __get_feature_vectors(self, pca=False):
         X = []
         Y = []
         x = []
@@ -83,16 +86,29 @@ class Trainer:
         for clss in self.train_data.keys():
             for item in self.train_data[clss]:
                 img = self.__preprocess(item)
-                hist = self.feature_extractor.describe(img)
+                hist = np.zeros(1)
+                for feature in self.feature_extractor:
+                    hist = np.hstack((feature.describe(img), hist))
+                if pca:
+                    hist = self.__pca(hist, 200)
                 X.append(hist)
                 Y.append(clss)
             
             for item in self.test_data[clss]:
                 img = self.__preprocess(item)
-                hist = self.feature_extractor.describe(img)
+                hist = np.zeros(1)
+                for feature in self.feature_extractor:
+                    hist = np.hstack((feature.describe(img), hist))
+                if pca:
+                    hist = self.__pca(hist, 200)
                 x.append(hist)
                 y.append(clss)
         return X,Y,x,y # trainX,trainY,testx,testy
+
+    def __pca(self, x, k=100):
+        pca = PCA(n_components=k)
+        principalComponents = pca.fit_transform(x.reshape(-1, 1))
+        return principalComponents
 
 
     def show_confussion_mat(self, test_labels, y_pred):

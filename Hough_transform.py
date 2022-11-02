@@ -19,7 +19,7 @@ class HoughTransform:
         self.lines = None
         self.circles = None
 
-    def get_lines(self, img):
+    def get_lines(self, img, show=False):
         # edges = cv2.Canny(img, 50, 200)
         # self.lines = cv2.HoughLinesP(img, 1, np.pi/180,
         #                              100, minLineLength=10, maxLineGap=250)
@@ -29,13 +29,17 @@ class HoughTransform:
         self.lines = probabilistic_hough_line(edges, threshold=10, line_length=5,
                                         line_gap=3)
         self.lines = np.array(self.lines)
+        if show:
+            self.__show_lines()
         return self.lines
 
-    def get_circles(self, img):
+    def get_circles(self, img, show=False):
         img_blur = cv2.medianBlur(img, 5)
         self.circles = cv2.HoughCircles(img_blur, cv2.HOUGH_GRADIENT,
                                         1, 40, param1=100, param2=30, minRadius=1, maxRadius=40)
         self.circles = self.circles if self.circles is not None else np.zeros((1,1,1))
+        if show:
+            self.__show_circle()
         return self.circles.flatten()
 
     def describe(self, img):
@@ -75,19 +79,19 @@ class HoughTransform:
 
 
 if __name__ == '__main__':
-    path = "C:/Users/user/Desktop/Ibrahim/Academic/pattern_recognition/Assignment-2/imageFeatureExtraction/data/class2/eyes.JPG"
+    path = "C:/Users/bs107/Desktop/imageFeatureExtraction/data_train/cat/cat_0077.jpg"
     # path = "C:/Users/user/Desktop/Ibrahim/Academic/pattern_recognition/Assignment-2/imageFeatureExtraction/data/class2/1.png"
-    img = cv2.imread(path, cv2.IMREAD_COLOR)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # img = cv2.imread(path, cv2.IMREAD_COLOR)
+    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    ht = HoughTransform()
+    # ht = HoughTransform()
 
-    # circles = ht.get_circles()
+    # circles = ht.get_circles(gray, True)
     # ht.show_circle()
 
     # lines = ht.get_lines()
     # ht.show_lines()
 
-    feature = ht.describe(gray)
+    # feature = ht.describe(gray)
 
-    print(feature.shape, feature)
+    # print(feature.shape, feature)

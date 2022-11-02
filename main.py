@@ -10,7 +10,7 @@ from Hough_transform import HoughTransform
 from Trainer import Trainer
 from Hog import HOG
 
-files = get_all_files()
+files = get_all_files("data_train")
 train, test = split_(files)
 
 # print(len(test['class2']))
@@ -18,22 +18,26 @@ train, test = split_(files)
 
 print("lbp feature_extractor")
 lbp = LocalBinaryPatterns(24, 8)
-lbp_trainer = Trainer(lbp, train, test)
-acc = lbp_trainer.train()
+# lbp_trainer = Trainer(lbp, train, test)
+# acc = lbp_trainer.train()
 
 
 print("HoughTransform feature_extractor")
 ht = HoughTransform()
-ht_trainer = Trainer(ht, train, test)
-acc = ht_trainer.train()
+# ht_trainer = Trainer(ht, train, test)
+# acc = ht_trainer.train()
 
 
 
 print("HOG feature_extractor")
 hog = HOG()
-hog_trainer = Trainer(hog, train, test)
-acc = hog_trainer.train()
+# hog_trainer = Trainer(hog, train, test)
+# acc = hog_trainer.train()
 
+
+print("Combine all features with PCA")
+pca_trainer = Trainer([hog, lbp, ht ], train, test)
+acc = pca_trainer.train()
 
 if __name__ == "__main__":
     pass
