@@ -18,22 +18,30 @@ train, test = split_(files)
 
 print("lbp feature_extractor")
 lbp = LocalBinaryPatterns(24, 8)
-# lbp_trainer = Trainer(lbp, train, test)
-# acc = lbp_trainer.train()
+lbp_trainer = Trainer(lbp, train, test)
+print("****************SVM****************")
+acc = lbp_trainer.train()
+print("****************RandomForest****************")
+rf_acc = lbp_trainer.train_rf()
 
 
 print("HoughTransform feature_extractor")
 ht = HoughTransform()
-# ht_trainer = Trainer(ht, train, test)
-# acc = ht_trainer.train()
+ht_trainer = Trainer(ht, train, test)
+print("****************SVM****************")
+acc = ht_trainer.train()
+print("****************RandomForest****************")
+rf_acc = lbp_trainer.train_rf()
 
 
 
 print("HOG feature_extractor")
 hog = HOG()
-# hog_trainer = Trainer(hog, train, test)
-# acc = hog_trainer.train()
-
+hog_trainer = Trainer(hog, train, test)
+print("****************SVM****************")
+acc = hog_trainer.train()
+print("****************RandomForest****************")
+rf_acc = lbp_trainer.train_rf()
 
 print("Combine all features with PCA")
 pca_trainer = Trainer([hog, lbp, ht ], train, test)

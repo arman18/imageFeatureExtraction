@@ -7,6 +7,7 @@ Created on Tue Oct 28 01:40:46 2022
 
 import cv2
 from sklearn.svm import LinearSVC, SVC
+from sklearn.ensemble import RandomForestClassifier
 from skimage.io import imread
 from skimage import data, color
 from skimage.transform import rescale, resize
@@ -19,14 +20,13 @@ from sklearn.decomposition import PCA
 
 
 
-
 class Trainer:
     def __init__(self, feature_extractor, train_data, test_data=None):
         self.feature_extractor = feature_extractor
         self.train_data = train_data
         self.test_data = test_data
         self.model = None
-        self.categories = ['Cloudy','Pen','Shiny']
+        self.categories = ['EOSINOPHIL','LYMPHOCYTE','MONOCYTE','NEUTROPHIL']
 
     def get_predictions(self, test_data):
         predictions  = []
@@ -50,9 +50,22 @@ class Trainer:
         svc = SVC(probability = True)
         self.model = GridSearchCV(svc, param_grid)
         self.model.fit(x_data, y_labels)
-    
+
+    def train_rf(self):
+        X_train, Y_train, x_test, y_test = self.__get_feature_vectors()
+        y_predicted = self.__train_rf(X_train, Y_train, x_test, y_test)
+        acc = self.__accuracy(y_test, y_predicted)
+        return acc
+
+    def __train_rf(self, x_data, Y_train,x_test, y_test):
+        rf = RandomForestClassifier(n_estimators = 100)
+        rf.fit(x_data, Y_train)
+        y_pred = rf.predict(x_test)
+        return y_pred
+
     def __accuracy(self, y_test, y_predicted):
         acc = {}
+        print(y_test)
         for idx in range(len(y_predicted)):
             if y_test[idx] not in acc.keys():
                 acc[y_test[idx]] = {}
@@ -116,4 +129,5 @@ class Trainer:
         print(cm)
         disp = ConfusionMatrixDisplay(confusion_matrix = cm, display_labels = self.categories)
         disp.plot()
+        plt.show()
 

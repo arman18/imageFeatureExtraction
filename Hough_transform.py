@@ -6,7 +6,6 @@ Created on Tue Oct 27 01:51:46 2022
 
 
 import cv2
-from cv2 import line
 import numpy as np
 from skimage.feature import canny
 from skimage.transform import probabilistic_hough_line
